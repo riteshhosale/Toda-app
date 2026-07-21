@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Advanced Todo App</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="index.css" />
+  </head>
+
+  <body>
+    <!-- Background -->
+    <div class="background"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Header -->
+      <header>
+        <div class="logo">
+          <i class="fa-solid fa-list-check"></i>
+
+          <h1>TaskFlow</h1>
+        </div>
+
+        <button id="themeBtn">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </header>
+
+      <!-- Welcome -->
+
+      <section class="welcome">
+        <h2>Hello 👋</h2>
+
+        <p>Stay productive today.</p>
+      </section>
+
+      <!-- Dashboard -->
+
+      <section class="dashboard">
+        <div class="card">
+          <i class="fa-solid fa-list"></i>
+
+          <h3 id="totalTasks">0</h3>
+
+          <p>Total</p>
+        </div>
+
+        <div class="card">
+          <i class="fa-solid fa-clock"></i>
+
+          <h3 id="activeTasks">0</h3>
+
+          <p>Active</p>
+        </div>
+
+        <div class="card">
+          <i class="fa-solid fa-circle-check"></i>
+
+          <h3 id="completedTasks">0</h3>
+
+          <p>Completed</p>
+        </div>
+
+        <div class="card">
+          <i class="fa-solid fa-fire"></i>
+
+          <h3 id="highPriority">0</h3>
+
+          <p>High</p>
+        </div>
+      </section>
+
+      <!-- Progress -->
+
+      <section class="progress-box">
+        <div class="progress-text">
+          <span>Today's Progress</span>
+
+          <span id="progressPercent">0%</span>
+        </div>
+
+        <div class="progress-bar">
+          <div id="progressFill"></div>
+        </div>
+      </section>
+
+      <!-- Add Task -->
+
+      <section class="add-task">
+        <input
+          type="text"
+          id="taskInput"
+          placeholder="What needs to be done?"
+        />
+
+        <select id="priority">
+          <option value="Low">Low</option>
+
+          <option value="Medium" selected>Medium</option>
+
+          <option value="High">High</option>
+        </select>
+
+        <input type="date" id="dueDate" />
+
+        <button id="addTask">
+          <i class="fa-solid fa-plus"></i>
+        </button>
+      </section>
+
+      <!-- Search -->
+
+      <section>
+        <input type="text" id="search" placeholder="Search task..." />
+      </section>
+
+      <!-- Filters -->
+
+      <section class="filters">
+        <button class="filter active" data-filter="all">All</button>
+
+        <button class="filter" data-filter="active">Active</button>
+
+        <button class="filter" data-filter="completed">Completed</button>
+      </section>
+
+      <!-- Todo List -->
+
+      <ul id="taskList"></ul>
+    </div>
+
+    <script src="index.js"></script>
+  </body>
+</html>
