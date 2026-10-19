@@ -28,7 +28,45 @@ const progressPercent = document.getElementById("progressPercent");
 // DATA
 // ===============================
 
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+function normalizeTasks(value) {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .filter((task) =>
+      task &&
+      typeof task === "object" &&
+      Number.isSafeInteger(Number(task.id)) &&
+      typeof task.title === "string"
+    )
+    .map((task) => ({
+      id: Number(task.id),
+      title: task.title,
+      priority: ["Low", "Medium", "High"].includes(task.priority) ? task.priority : "Medium",
+      dueDate: typeof task.dueDate === "string" ? task.dueDate : "",
+      completed: task.completed === true,
+    }));
+}
+
+function loadTasks() {
+  try {
+    return normalizeTasks(JSON.parse(localStorage.getItem("tasks") || "[]"));
+  } catch {
+    localStorage.removeItem("tasks");
+    return [];
+  }
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[character]);
+}
+
+let tasks = loadTasks();
 
 let currentFilter = "all";
 
@@ -149,25 +187,35 @@ function renderTasks() {
     filtered = tasks.filter((task) => task.completed);
   }
 
+  const keyword = search.value.trim().toLowerCase();
+  if (keyword) {
+    filtered = filtered.filter((task) => task.title.toLowerCase().includes(keyword));
+  }
+
   filtered.forEach((task) => {
     const li = document.createElement("li");
 
     li.className = "task " + (task.completed ? "completed" : "");
+
+    const taskId = Number(task.id);
+    const taskTitle = escapeHTML(task.title);
+    const taskDate = escapeHTML(task.dueDate || "No Date");
+    const taskPriority = ["Low", "Medium", "High"].includes(task.priority) ? task.priority : "Medium";
 
     li.innerHTML = `
 
 <div class="task-info">
 
 <h3 class="task-title">
-${task.title}
+${taskTitle}
 </h3>
 
 <div class="task-date">
-📅 ${task.dueDate || "No Date"}
+📅 ${taskDate}
 </div>
 
-<span class="priority ${task.priority.toLowerCase()}">
-${task.priority}
+<span class="priority ${taskPriority.toLowerCase()}">
+${taskPriority}
 </span>
 
 </div>
@@ -176,7 +224,8 @@ ${task.priority}
 
 <button
 class="completeBtn"
-onclick="toggleTask(${task.id})">
+onclick="toggleTask(${taskId})"
+aria-label="Complete task">
 
 <i class="fa-solid fa-check"></i>
 
@@ -184,7 +233,8 @@ onclick="toggleTask(${task.id})">
 
 <button
 class="editBtn"
-onclick="editTask(${task.id})">
+onclick="editTask(${taskId})"
+aria-label="Edit task">
 
 <i class="fa-solid fa-pen"></i>
 
@@ -192,7 +242,8 @@ onclick="editTask(${task.id})">
 
 <button
 class="deleteBtn"
-onclick="deleteTask(${task.id})">
+onclick="deleteTask(${taskId})"
+aria-label="Delete task">
 
 <i class="fa-solid fa-trash"></i>
 
@@ -213,21 +264,7 @@ renderTasks();
 // SEARCH
 // ===============================
 
-search.addEventListener("input", function () {
-  const keyword = search.value.toLowerCase();
-
-  const taskCards = document.querySelectorAll(".task");
-
-  taskCards.forEach((card) => {
-    const title = card.querySelector(".task-title").textContent.toLowerCase();
-
-    if (title.includes(keyword)) {
-      card.style.display = "flex";
-    } else {
-      card.style.display = "none";
-    }
-  });
-});
+search.addEventListener("input", () => renderTasks());
 
 // ===============================
 // FILTERS
@@ -323,6 +360,13 @@ style="font-size:60px;margin-bottom:20px;">
 </div>
 
 `;
+  } else if (taskList.children.length === 0) {
+    taskList.innerHTML = `
+      <div class="empty">
+        <h2>No matching tasks</h2>
+        <p>Try another search or task filter.</p>
+      </div>
+    `;
   }
 }
 
